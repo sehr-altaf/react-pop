@@ -27,7 +27,7 @@ const styles = `
     flex-direction: column;
   }
 
-  /* ── NAV ── */
+
   .fp-nav {
     display: flex;
     align-items: center;
@@ -79,7 +79,7 @@ const styles = `
 
   .fp-nav-cta:hover { background: var(--accent) !important; color: var(--paper) !important; }
 
-  /* ── HERO ── */
+  
   .fp-hero {
     flex: 1;
     display: grid;
@@ -182,7 +182,7 @@ const styles = `
 
   .btn-ghost:hover { border-color: var(--ink); background: rgba(14,12,9,0.04); }
 
-  /* ── HERO VISUAL ── */
+
   .fp-hero-visual {
     position: relative;
     height: 480px;
@@ -280,7 +280,7 @@ const styles = `
     font-weight: 700;
   }
 
-  /* ── STATS STRIP ── */
+ 
   .fp-stats {
     border-top: 1px solid var(--border);
     display: grid;
@@ -319,7 +319,7 @@ const styles = `
     font-weight: 300;
   }
 
-  /* ── ANIMATIONS ── */
+ 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(18px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -335,7 +335,7 @@ const styles = `
     to   { width: 73%; }
   }
 
-  /* ── RESPONSIVE ── */
+
   @media (max-width: 768px) {
     .fp-nav { padding: 1.25rem 1.5rem; }
     .fp-nav-links { display: none; }
@@ -369,7 +369,7 @@ export default function App() {
       <style>{styles}</style>
       <div className="fp-root">
 
-        {/* NAV */}
+
         <nav className="fp-nav">
           <a href="#" className="fp-logo">Arc<span>.</span>Studio</a>
           <ul className="fp-nav-links">
@@ -380,7 +380,7 @@ export default function App() {
           </ul>
         </nav>
 
-        {/* HERO */}
+
         <section className="fp-hero">
           <div className="fp-hero-text">
             <p className="fp-eyebrow">Design &amp; Strategy Studio</p>
@@ -414,7 +414,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* STATS */}
         <div className="fp-stats">
           {[
             { value: "12+", label: "Years of experience" },
@@ -432,8 +431,11 @@ export default function App() {
             </div>
           ))}
         </div>
+        <div className="fp-section">helloo </div>
+
 
       </div>
+
     </>
   );
 }
