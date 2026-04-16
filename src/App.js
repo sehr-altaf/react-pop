@@ -1,441 +1,421 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+// ── Styles ──────────────────────────────────────────────────────────────────
+const styles = {
+  // Global
+  root: {
+    fontFamily: "'Georgia', serif",
+    minHeight: "100vh",
+    background: "#faf9f6",
+    color: "#1a1a1a",
+  },
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  // Navbar
+  nav: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 2.5rem",
+    height: "60px",
+    background: "#1a1a1a",
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
+  },
+  navLogo: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#f0e6d3",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+  },
+  navLinks: {
+    display: "flex",
+    gap: "8px",
+  },
+  navBtn: (active) => ({
+    background: active ? "#c9a96e" : "transparent",
+    color: active ? "#1a1a1a" : "#c9a96e",
+    border: "1px solid #c9a96e",
+    borderRadius: "4px",
+    padding: "6px 18px",
+    fontSize: "13px",
+    letterSpacing: "1px",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    transition: "all 0.2s",
+  }),
 
-  :root {
-    --ink: #0e0c09;
-    --paper: #f5f0e8;
-    --accent: #c84b2f;
-    --muted: #8c8070;
-    --border: #d4cdc0;
-  }
+  // ── HOME PAGE ──────────────────────────────────────────────────────────────
+  hero: {
+    background: "#1a1a1a",
+    color: "#f0e6d3",
+    padding: "6rem 2.5rem 5rem",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+    borderBottom: "4px solid #c9a96e",
+  },
+  heroEyebrow: {
+    fontSize: "11px",
+    letterSpacing: "4px",
+    textTransform: "uppercase",
+    color: "#c9a96e",
+    marginBottom: "1.5rem",
+  },
+  heroTitle: {
+    fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
+    fontWeight: "700",
+    lineHeight: 1.1,
+    marginBottom: "1.5rem",
+    maxWidth: "700px",
+  },
+  heroSub: {
+    fontSize: "16px",
+    color: "#b0a898",
+    maxWidth: "480px",
+    lineHeight: 1.8,
+    marginBottom: "2.5rem",
+  },
+  heroCta: {
+    background: "#c9a96e",
+    color: "#1a1a1a",
+    border: "none",
+    padding: "14px 36px",
+    fontSize: "13px",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+    fontWeight: "700",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    borderRadius: "2px",
+    transition: "opacity 0.2s",
+  },
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  // Features section
+  featuresSection: {
+    padding: "5rem 2.5rem",
+    maxWidth: "1100px",
+    margin: "0 auto",
+  },
+  sectionLabel: {
+    fontSize: "11px",
+    letterSpacing: "4px",
+    textTransform: "uppercase",
+    color: "#c9a96e",
+    marginBottom: "0.75rem",
+  },
+  sectionTitle: {
+    fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
+    fontWeight: "700",
+    marginBottom: "3rem",
+    maxWidth: "500px",
+    lineHeight: 1.2,
+  },
+  featuresGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "24px",
+  },
+  featureCard: {
+    background: "#fff",
+    border: "1px solid #e8e4dd",
+    borderRadius: "6px",
+    padding: "2rem 1.75rem",
+    borderTop: "3px solid #c9a96e",
+  },
+  featureIcon: {
+    fontSize: "28px",
+    marginBottom: "1rem",
+  },
+  featureName: {
+    fontSize: "15px",
+    fontWeight: "700",
+    marginBottom: "0.5rem",
+    letterSpacing: "0.5px",
+  },
+  featureDesc: {
+    fontSize: "14px",
+    color: "#6b6660",
+    lineHeight: 1.7,
+  },
 
-  .fp-root {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  // Testimonial strip
+  testimonialStrip: {
+    background: "#f0e6d3",
+    padding: "4rem 2.5rem",
+    textAlign: "center",
+    borderTop: "1px solid #d8cfc4",
+    borderBottom: "1px solid #d8cfc4",
+  },
+  testimonialQuote: {
+    fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
+    fontStyle: "italic",
+    color: "#3a3530",
+    maxWidth: "640px",
+    margin: "0 auto 1.25rem",
+    lineHeight: 1.7,
+  },
+  testimonialAuthor: {
+    fontSize: "12px",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+    color: "#8a7f74",
+  },
 
+  // ── ABOUT PAGE ─────────────────────────────────────────────────────────────
+  aboutHero: {
+    background: "#2a241e",
+    color: "#f0e6d3",
+    padding: "5rem 2.5rem",
+    display: "flex",
+    gap: "4rem",
+    alignItems: "center",
+    flexWrap: "wrap",
+    borderBottom: "4px solid #c9a96e",
+  },
+  aboutHeroText: {
+    flex: 1,
+    minWidth: "260px",
+  },
+  aboutHeroTitle: {
+    fontSize: "clamp(2rem, 5vw, 3.5rem)",
+    fontWeight: "700",
+    lineHeight: 1.15,
+    marginBottom: "1.25rem",
+  },
+  aboutHeroDesc: {
+    fontSize: "15px",
+    color: "#b0a898",
+    lineHeight: 1.85,
+    maxWidth: "420px",
+  },
+  aboutHeroVisual: {
+    flex: "0 0 260px",
+    height: "260px",
+    background: "#c9a96e22",
+    border: "1px solid #c9a96e55",
+    borderRadius: "6px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "80px",
+  },
 
-  .fp-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 3rem;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    background: var(--paper);
-    z-index: 10;
-  }
+  // Stats
+  statsRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "1px",
+    background: "#e8e4dd",
+    borderBottom: "1px solid #e8e4dd",
+  },
+  statBox: {
+    flex: "1 1 160px",
+    background: "#fff",
+    padding: "2.5rem 2rem",
+    textAlign: "center",
+  },
+  statNum: {
+    fontSize: "clamp(2rem, 4vw, 3rem)",
+    fontWeight: "700",
+    color: "#c9a96e",
+    lineHeight: 1,
+    marginBottom: "0.5rem",
+  },
+  statLabel: {
+    fontSize: "12px",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+    color: "#8a7f74",
+  },
 
-  .fp-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.35rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    text-decoration: none;
-  }
+  // Team
+  teamSection: {
+    padding: "5rem 2.5rem",
+    maxWidth: "1100px",
+    margin: "0 auto",
+  },
+  teamGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "24px",
+    marginTop: "3rem",
+  },
+  teamCard: {
+    background: "#fff",
+    border: "1px solid #e8e4dd",
+    borderRadius: "6px",
+    overflow: "hidden",
+    textAlign: "center",
+  },
+  teamAvatar: {
+    height: "140px",
+    background: "#2a241e",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "48px",
+  },
+  teamBody: {
+    padding: "1.25rem 1rem",
+  },
+  teamName: {
+    fontSize: "15px",
+    fontWeight: "700",
+    marginBottom: "4px",
+  },
+  teamRole: {
+    fontSize: "12px",
+    color: "#c9a96e",
+    letterSpacing: "1px",
+    textTransform: "uppercase",
+  },
 
-  .fp-logo span { color: var(--accent); }
+  // Footer
+  footer: {
+    background: "#1a1a1a",
+    color: "#6b6660",
+    textAlign: "center",
+    padding: "2rem",
+    fontSize: "13px",
+    letterSpacing: "1px",
+  },
+};
 
-  .fp-nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
+// ── Data ─────────────────────────────────────────────────────────────────────
+const features = [
+  { icon: "✦", name: "Crafted with Intent", desc: "Every decision is deliberate — from spacing to tone, nothing is accidental." },
+  { icon: "◈", name: "Built to Scale", desc: "Architecture that grows with your needs, without technical debt piling up." },
+  { icon: "⬡", name: "Always Reliable", desc: "99.9% uptime backed by proactive monitoring and redundant infrastructure." },
+  { icon: "◎", name: "Human-Centered", desc: "Designed for real people. Accessibility and clarity are non-negotiable." },
+];
 
-  .fp-nav-links a {
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
+const team = [
+  { emoji: "🧑‍💼", name: "Amir Hasan", role: "Founder & CEO" },
+  { emoji: "👩‍🎨", name: "Lena Fischer", role: "Design Lead" },
+  { emoji: "👨‍💻", name: "Raj Patel", role: "Engineering" },
+  { emoji: "👩‍📣", name: "Cleo Martin", role: "Growth" },
+];
 
-  .fp-nav-links a:hover { color: var(--ink); }
+const stats = [
+  { num: "12K+", label: "Customers" },
+  { num: "98%", label: "Satisfaction" },
+  { num: "6 yrs", label: "In Business" },
+  { num: "40+", label: "Countries" },
+];
 
-  .fp-nav-cta {
-    background: var(--ink);
-    color: var(--paper) !important;
-    padding: 0.5rem 1.25rem;
-    border-radius: 2px;
-    transition: background 0.2s !important;
-  }
-
-  .fp-nav-cta:hover { background: var(--accent) !important; color: var(--paper) !important; }
-
-  
-  .fp-hero {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    padding: 5rem 3rem 4rem;
-    max-width: 1280px;
-    margin: 0 auto;
-    width: 100%;
-    align-items: center;
-  }
-
-  .fp-hero-text { padding-right: 4rem; }
-
-  .fp-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.1s forwards;
-  }
-
-  .fp-eyebrow::before {
-    content: '';
-    display: block;
-    width: 2rem;
-    height: 1px;
-    background: var(--accent);
-  }
-
-  .fp-heading {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.8rem, 5vw, 4.2rem);
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.25s forwards;
-  }
-
-  .fp-heading em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .fp-sub {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--muted);
-    max-width: 42ch;
-    margin-bottom: 2.5rem;
-    font-weight: 300;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.4s forwards;
-  }
-
-  .fp-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.55s forwards;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 0.85rem 2rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: background 0.2s, transform 0.15s;
-  }
-
-  .btn-primary:hover { background: #a83a20; transform: translateY(-1px); }
-
-  .btn-ghost {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--ink);
-    padding: 0.85rem 2rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: border-color 0.2s, background 0.2s;
-  }
-
-  .btn-ghost:hover { border-color: var(--ink); background: rgba(14,12,9,0.04); }
-
-
-  .fp-hero-visual {
-    position: relative;
-    height: 480px;
-    opacity: 0;
-    animation: fadeIn 0.8s 0.3s forwards;
-  }
-
-  .fp-card-stack {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  .fp-card {
-    position: absolute;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .card-main {
-    width: 78%;
-    height: 85%;
-    top: 0;
-    right: 0;
-    background: var(--ink);
-    display: flex;
-    flex-direction: column;
-    padding: 2rem;
-    color: var(--paper);
-  }
-
-  .card-main-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: auto;
-  }
-
-  .card-main-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 4rem;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-
-  .card-main-desc {
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-weight: 300;
-  }
-
-  .card-main-bar {
-    margin-top: 1.5rem;
-    height: 3px;
-    background: rgba(245,240,232,0.1);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .card-main-bar-fill {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    border-radius: 2px;
-    animation: barGrow 1.2s 0.9s cubic-bezier(0.4,0,0.2,1) forwards;
-  }
-
-  .card-accent {
-    width: 48%;
-    height: 42%;
-    bottom: 0;
-    left: 0;
-    background: var(--accent);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    box-shadow: 8px 8px 0 var(--ink);
-  }
-
-  .card-accent-tag {
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(245,240,232,0.7);
-    margin-bottom: 0.5rem;
-  }
-
-  .card-accent-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    color: #fff;
-    font-weight: 700;
-  }
-
- 
-  .fp-stats {
-    border-top: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    max-width: 1280px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .fp-stat {
-    padding: 2rem 3rem;
-    border-right: 1px solid var(--border);
-    opacity: 0;
-    animation: fadeUp 0.5s forwards;
-  }
-
-  .fp-stat:last-child { border-right: none; }
-  .fp-stat:nth-child(1) { animation-delay: 0.6s; }
-  .fp-stat:nth-child(2) { animation-delay: 0.75s; }
-  .fp-stat:nth-child(3) { animation-delay: 0.9s; }
-
-  .fp-stat-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-  }
-
-  .fp-stat-number span { color: var(--accent); }
-
-  .fp-stat-label {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-top: 0.25rem;
-    font-weight: 300;
-  }
-
- 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  @keyframes barGrow {
-    from { width: 0%; }
-    to   { width: 73%; }
-  }
-
-
-  @media (max-width: 768px) {
-    .fp-nav { padding: 1.25rem 1.5rem; }
-    .fp-nav-links { display: none; }
-    .fp-hero { grid-template-columns: 1fr; padding: 3rem 1.5rem 2rem; }
-    .fp-hero-text { padding-right: 0; }
-    .fp-hero-visual { height: 320px; margin-top: 2rem; }
-    .fp-stats { grid-template-columns: 1fr; }
-    .fp-stat { border-right: none; border-bottom: 1px solid var(--border); padding: 1.5rem; }
-  }
-`;
-
-export default function App() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const target = 2847;
-    const duration = 1400;
-    const step = 16;
-    const increment = (target / duration) * step;
-    let current = 0;
-    const timer = setInterval(() => {
-      current = Math.min(current + increment, target);
-      setCount(Math.floor(current));
-      if (current >= target) clearInterval(timer);
-    }, step);
-    return () => clearInterval(timer);
-  }, []);
-
+// ── Pages ─────────────────────────────────────────────────────────────────────
+function HomePage({ goToAbout }) {
   return (
-    <>
-      <style>{styles}</style>
-      <div className="fp-root">
+    <div>
+      {/* Hero */}
+      <section style={styles.hero}>
+        <p style={styles.heroEyebrow}>Welcome to Aurum Studio</p>
+        <h1 style={styles.heroTitle}>Where craft meets clarity.</h1>
+        <p style={styles.heroSub}>
+          We build digital experiences that are precise, purposeful, and built to last. No noise — just work that matters.
+        </p>
+        <button style={styles.heroCta} onClick={goToAbout}>
+          Our Story →
+        </button>
+      </section>
 
-
-        <nav className="fp-nav">
-          <a href="#" className="fp-logo">Arc<span>.</span>Studio</a>
-          <ul className="fp-nav-links">
-            <li><a href="#">Work</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#" className="fp-nav-cta">Get Started</a></li>
-          </ul>
-        </nav>
-
-
-        <section className="fp-hero">
-          <div className="fp-hero-text">
-            <p className="fp-eyebrow">Design &amp; Strategy Studio</p>
-            <h1 className="fp-heading">
-              Craft that<br /><em>moves</em><br />markets.
-            </h1>
-            <p className="fp-sub">
-              We shape brands, products, and digital experiences that resonate with the people who matter most to your business.
-            </p>
-            <div className="fp-actions">
-              <button className="btn-primary">View Our Work</button>
-              <button className="btn-ghost">Learn More</button>
-            </div>
-          </div>
-
-          <div className="fp-hero-visual">
-            <div className="fp-card-stack">
-              <div className="fp-card card-main">
-                <span className="card-main-label">Projects Delivered</span>
-                <div className="card-main-number">{count.toLocaleString()}</div>
-                <div className="card-main-desc">Across 40+ countries</div>
-                <div className="card-main-bar">
-                  <div className="card-main-bar-fill" />
-                </div>
-              </div>
-              <div className="fp-card card-accent">
-                <div className="card-accent-tag">Avg. ROI</div>
-                <div className="card-accent-value">3.8×</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div className="fp-stats">
-          {[
-            { value: "12+", label: "Years of experience" },
-            { value: "98%", label: "Client satisfaction rate" },
-            { value: "40", label: "Countries reached" },
-          ].map(({ value, label }) => (
-            <div className="fp-stat" key={label}>
-              <div className="fp-stat-number">
-                {value.replace(/\d+/, (n) => (
-                  <span key={n}>{n}</span>
-                ))}
-                {value}
-              </div>
-              <div className="fp-stat-label">{label}</div>
+      {/* Features */}
+      <section style={styles.featuresSection}>
+        <p style={styles.sectionLabel}>What we believe</p>
+        <h2 style={styles.sectionTitle}>Principles we refuse to compromise on.</h2>
+        <div style={styles.featuresGrid}>
+          {features.map((f) => (
+            <div key={f.name} style={styles.featureCard}>
+              <div style={styles.featureIcon}>{f.icon}</div>
+              <div style={styles.featureName}>{f.name}</div>
+              <div style={styles.featureDesc}>{f.desc}</div>
             </div>
           ))}
         </div>
-        <div className="fp-section">helloo </div>
+      </section>
 
+      {/* Testimonial */}
+      <section style={styles.testimonialStrip}>
+        <p style={styles.testimonialQuote}>
+          "Working with Aurum was the first time a studio truly understood what we were trying to say — and then said it better."
+        </p>
+        <p style={styles.testimonialAuthor}>— Nadia K., Co-founder at Forma</p>
+      </section>
+    </div>
+  );
+}
 
+function AboutPage() {
+  return (
+    <div>
+      {/* Hero */}
+      <section style={styles.aboutHero}>
+        <div style={styles.aboutHeroText}>
+          <p style={{ ...styles.heroEyebrow, marginBottom: "1rem" }}>Who we are</p>
+          <h1 style={styles.aboutHeroTitle}>Small team. Big standards.</h1>
+          <p style={styles.aboutHeroDesc}>
+            Aurum Studio was founded on a simple belief: the best work comes from people who care deeply, move deliberately, and never settle for "good enough." We are a small, focused studio — and that's exactly the point.
+          </p>
+        </div>
+        <div style={styles.aboutHeroVisual}>🏛️</div>
+      </section>
+
+      {/* Stats */}
+      <div style={styles.statsRow}>
+        {stats.map((s) => (
+          <div key={s.label} style={styles.statBox}>
+            <div style={styles.statNum}>{s.num}</div>
+            <div style={styles.statLabel}>{s.label}</div>
+          </div>
+        ))}
       </div>
 
-    </>
+      {/* Team */}
+      <section style={styles.teamSection}>
+        <p style={styles.sectionLabel}>The people</p>
+        <h2 style={styles.sectionTitle}>Meet the team behind the work.</h2>
+        <div style={styles.teamGrid}>
+          {team.map((t) => (
+            <div key={t.name} style={styles.teamCard}>
+              <div style={styles.teamAvatar}>{t.emoji}</div>
+              <div style={styles.teamBody}>
+                <div style={styles.teamName}>{t.name}</div>
+                <div style={styles.teamRole}>{t.role}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+export default function App() {
+  const [page, setPage] = useState("home");
+
+  return (
+    <div style={styles.root}>
+      {/* Navbar */}
+      <nav style={styles.nav}>
+        <div style={styles.navLogo}>Aurum</div>
+        <div style={styles.navLinks}>
+          <button style={styles.navBtn(page === "home")} onClick={() => setPage("home")}>Home</button>
+          <button style={styles.navBtn(page === "about")} onClick={() => setPage("about")}>About</button>
+        </div>
+      </nav>
+
+      {/* Pages */}
+      {page === "home" && <HomePage goToAbout={() => setPage("about")} />}
+      {page === "about" && <AboutPage />}
+
+      {/* Footer */}
+      <footer style={styles.footer}>
+        © {new Date().getFullYear()} Aurum Studio — All rights reserved.
+      </footer>
+    </div>
   );
 }
