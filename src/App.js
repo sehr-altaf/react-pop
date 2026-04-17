@@ -1,421 +1,268 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// ── Styles ──────────────────────────────────────────────────────────────────
-const styles = {
-  // Global
-  root: {
-    fontFamily: "'Georgia', serif",
-    minHeight: "100vh",
-    background: "#faf9f6",
-    color: "#1a1a1a",
-  },
-
-  // Navbar
-  nav: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 2.5rem",
-    height: "60px",
-    background: "#1a1a1a",
-    position: "sticky",
-    top: 0,
-    zIndex: 100,
-  },
-  navLogo: {
-    fontSize: "20px",
-    fontWeight: "700",
-    color: "#f0e6d3",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-  },
-  navLinks: {
-    display: "flex",
-    gap: "8px",
-  },
-  navBtn: (active) => ({
-    background: active ? "#c9a96e" : "transparent",
-    color: active ? "#1a1a1a" : "#c9a96e",
-    border: "1px solid #c9a96e",
-    borderRadius: "4px",
-    padding: "6px 18px",
-    fontSize: "13px",
-    letterSpacing: "1px",
-    cursor: "pointer",
-    fontFamily: "inherit",
-    transition: "all 0.2s",
-  }),
-
-  // ── HOME PAGE ──────────────────────────────────────────────────────────────
-  hero: {
-    background: "#1a1a1a",
-    color: "#f0e6d3",
-    padding: "6rem 2.5rem 5rem",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    textAlign: "center",
-    borderBottom: "4px solid #c9a96e",
-  },
-  heroEyebrow: {
-    fontSize: "11px",
-    letterSpacing: "4px",
-    textTransform: "uppercase",
-    color: "#c9a96e",
-    marginBottom: "1.5rem",
-  },
-  heroTitle: {
-    fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
-    fontWeight: "700",
-    lineHeight: 1.1,
-    marginBottom: "1.5rem",
-    maxWidth: "700px",
-  },
-  heroSub: {
-    fontSize: "16px",
-    color: "#b0a898",
-    maxWidth: "480px",
-    lineHeight: 1.8,
-    marginBottom: "2.5rem",
-  },
-  heroCta: {
-    background: "#c9a96e",
-    color: "#1a1a1a",
-    border: "none",
-    padding: "14px 36px",
-    fontSize: "13px",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    fontWeight: "700",
-    cursor: "pointer",
-    fontFamily: "inherit",
-    borderRadius: "2px",
-    transition: "opacity 0.2s",
-  },
-
-  // Features section
-  featuresSection: {
-    padding: "5rem 2.5rem",
-    maxWidth: "1100px",
-    margin: "0 auto",
-  },
-  sectionLabel: {
-    fontSize: "11px",
-    letterSpacing: "4px",
-    textTransform: "uppercase",
-    color: "#c9a96e",
-    marginBottom: "0.75rem",
-  },
-  sectionTitle: {
-    fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
-    fontWeight: "700",
-    marginBottom: "3rem",
-    maxWidth: "500px",
-    lineHeight: 1.2,
-  },
-  featuresGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: "24px",
-  },
-  featureCard: {
-    background: "#fff",
-    border: "1px solid #e8e4dd",
-    borderRadius: "6px",
-    padding: "2rem 1.75rem",
-    borderTop: "3px solid #c9a96e",
-  },
-  featureIcon: {
-    fontSize: "28px",
-    marginBottom: "1rem",
-  },
-  featureName: {
-    fontSize: "15px",
-    fontWeight: "700",
-    marginBottom: "0.5rem",
-    letterSpacing: "0.5px",
-  },
-  featureDesc: {
-    fontSize: "14px",
-    color: "#6b6660",
-    lineHeight: 1.7,
-  },
-
-  // Testimonial strip
-  testimonialStrip: {
-    background: "#f0e6d3",
-    padding: "4rem 2.5rem",
-    textAlign: "center",
-    borderTop: "1px solid #d8cfc4",
-    borderBottom: "1px solid #d8cfc4",
-  },
-  testimonialQuote: {
-    fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
-    fontStyle: "italic",
-    color: "#3a3530",
-    maxWidth: "640px",
-    margin: "0 auto 1.25rem",
-    lineHeight: 1.7,
-  },
-  testimonialAuthor: {
-    fontSize: "12px",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    color: "#8a7f74",
-  },
-
-  // ── ABOUT PAGE ─────────────────────────────────────────────────────────────
-  aboutHero: {
-    background: "#2a241e",
-    color: "#f0e6d3",
-    padding: "5rem 2.5rem",
-    display: "flex",
-    gap: "4rem",
-    alignItems: "center",
-    flexWrap: "wrap",
-    borderBottom: "4px solid #c9a96e",
-  },
-  aboutHeroText: {
-    flex: 1,
-    minWidth: "260px",
-  },
-  aboutHeroTitle: {
-    fontSize: "clamp(2rem, 5vw, 3.5rem)",
-    fontWeight: "700",
-    lineHeight: 1.15,
-    marginBottom: "1.25rem",
-  },
-  aboutHeroDesc: {
-    fontSize: "15px",
-    color: "#b0a898",
-    lineHeight: 1.85,
-    maxWidth: "420px",
-  },
-  aboutHeroVisual: {
-    flex: "0 0 260px",
-    height: "260px",
-    background: "#c9a96e22",
-    border: "1px solid #c9a96e55",
-    borderRadius: "6px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "80px",
-  },
-
-  // Stats
-  statsRow: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "1px",
-    background: "#e8e4dd",
-    borderBottom: "1px solid #e8e4dd",
-  },
-  statBox: {
-    flex: "1 1 160px",
-    background: "#fff",
-    padding: "2.5rem 2rem",
-    textAlign: "center",
-  },
-  statNum: {
-    fontSize: "clamp(2rem, 4vw, 3rem)",
-    fontWeight: "700",
-    color: "#c9a96e",
-    lineHeight: 1,
-    marginBottom: "0.5rem",
-  },
-  statLabel: {
-    fontSize: "12px",
-    letterSpacing: "2px",
-    textTransform: "uppercase",
-    color: "#8a7f74",
-  },
-
-  // Team
-  teamSection: {
-    padding: "5rem 2.5rem",
-    maxWidth: "1100px",
-    margin: "0 auto",
-  },
-  teamGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "24px",
-    marginTop: "3rem",
-  },
-  teamCard: {
-    background: "#fff",
-    border: "1px solid #e8e4dd",
-    borderRadius: "6px",
-    overflow: "hidden",
-    textAlign: "center",
-  },
-  teamAvatar: {
-    height: "140px",
-    background: "#2a241e",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "48px",
-  },
-  teamBody: {
-    padding: "1.25rem 1rem",
-  },
-  teamName: {
-    fontSize: "15px",
-    fontWeight: "700",
-    marginBottom: "4px",
-  },
-  teamRole: {
-    fontSize: "12px",
-    color: "#c9a96e",
-    letterSpacing: "1px",
-    textTransform: "uppercase",
-  },
-
-  // Footer
-  footer: {
-    background: "#1a1a1a",
-    color: "#6b6660",
-    textAlign: "center",
-    padding: "2rem",
-    fontSize: "13px",
-    letterSpacing: "1px",
-  },
-};
-
-// ── Data ─────────────────────────────────────────────────────────────────────
-const features = [
-  { icon: "✦", name: "Crafted with Intent", desc: "Every decision is deliberate — from spacing to tone, nothing is accidental." },
-  { icon: "◈", name: "Built to Scale", desc: "Architecture that grows with your needs, without technical debt piling up." },
-  { icon: "⬡", name: "Always Reliable", desc: "99.9% uptime backed by proactive monitoring and redundant infrastructure." },
-  { icon: "◎", name: "Human-Centered", desc: "Designed for real people. Accessibility and clarity are non-negotiable." },
-];
-
-const team = [
-  { emoji: "🧑‍💼", name: "Amir Hasan", role: "Founder & CEO" },
-  { emoji: "👩‍🎨", name: "Lena Fischer", role: "Design Lead" },
-  { emoji: "👨‍💻", name: "Raj Patel", role: "Engineering" },
-  { emoji: "👩‍📣", name: "Cleo Martin", role: "Growth" },
-];
-
-const stats = [
-  { num: "12K+", label: "Customers" },
-  { num: "98%", label: "Satisfaction" },
-  { num: "6 yrs", label: "In Business" },
-  { num: "40+", label: "Countries" },
-];
-
-// ── Pages ─────────────────────────────────────────────────────────────────────
-function HomePage({ goToAbout }) {
-  return (
-    <div>
-      {/* Hero */}
-      <section style={styles.hero}>
-        <p style={styles.heroEyebrow}>Welcome to Aurum Studio</p>
-        <h1 style={styles.heroTitle}>Where craft meets clarity.</h1>
-        <p style={styles.heroSub}>
-          We build digital experiences that are precise, purposeful, and built to last. No noise — just work that matters.
-        </p>
-        <button style={styles.heroCta} onClick={goToAbout}>
-          Our Story →
-        </button>
-      </section>
-
-      {/* Features */}
-      <section style={styles.featuresSection}>
-        <p style={styles.sectionLabel}>What we believe</p>
-        <h2 style={styles.sectionTitle}>Principles we refuse to compromise on.</h2>
-        <div style={styles.featuresGrid}>
-          {features.map((f) => (
-            <div key={f.name} style={styles.featureCard}>
-              <div style={styles.featureIcon}>{f.icon}</div>
-              <div style={styles.featureName}>{f.name}</div>
-              <div style={styles.featureDesc}>{f.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Testimonial */}
-      <section style={styles.testimonialStrip}>
-        <p style={styles.testimonialQuote}>
-          "Working with Aurum was the first time a studio truly understood what we were trying to say — and then said it better."
-        </p>
-        <p style={styles.testimonialAuthor}>— Nadia K., Co-founder at Forma</p>
-      </section>
-    </div>
-  );
-}
-
-function AboutPage() {
-  return (
-    <div>
-      {/* Hero */}
-      <section style={styles.aboutHero}>
-        <div style={styles.aboutHeroText}>
-          <p style={{ ...styles.heroEyebrow, marginBottom: "1rem" }}>Who we are</p>
-          <h1 style={styles.aboutHeroTitle}>Small team. Big standards.</h1>
-          <p style={styles.aboutHeroDesc}>
-            Aurum Studio was founded on a simple belief: the best work comes from people who care deeply, move deliberately, and never settle for "good enough." We are a small, focused studio — and that's exactly the point.
-          </p>
-        </div>
-        <div style={styles.aboutHeroVisual}>🏛️</div>
-      </section>
-
-      {/* Stats */}
-      <div style={styles.statsRow}>
-        {stats.map((s) => (
-          <div key={s.label} style={styles.statBox}>
-            <div style={styles.statNum}>{s.num}</div>
-            <div style={styles.statLabel}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Team */}
-      <section style={styles.teamSection}>
-        <p style={styles.sectionLabel}>The people</p>
-        <h2 style={styles.sectionTitle}>Meet the team behind the work.</h2>
-        <div style={styles.teamGrid}>
-          {team.map((t) => (
-            <div key={t.name} style={styles.teamCard}>
-              <div style={styles.teamAvatar}>{t.emoji}</div>
-              <div style={styles.teamBody}>
-                <div style={styles.teamName}>{t.name}</div>
-                <div style={styles.teamRole}>{t.role}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
-  );
-}
-
-// ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState("home");
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setVisible(true), 200);
+  }, []);
 
   return (
     <div style={styles.root}>
-      {/* Navbar */}
+      {/* Global animation */}
+      <style>{globalStyles}</style>
+
+      {/* NAVBAR */}
       <nav style={styles.nav}>
-        <div style={styles.navLogo}>Aurum</div>
+        <div style={styles.logo}>Aurum</div>
         <div style={styles.navLinks}>
           <button style={styles.navBtn(page === "home")} onClick={() => setPage("home")}>Home</button>
           <button style={styles.navBtn(page === "about")} onClick={() => setPage("about")}>About</button>
         </div>
       </nav>
 
-      {/* Pages */}
-      {page === "home" && <HomePage goToAbout={() => setPage("about")} />}
-      {page === "about" && <AboutPage />}
+      {/* PAGE SWITCH */}
+      <div style={{ animation: "fadeIn 0.6s ease" }}>
+        {page === "home" && <Home visible={visible} goToAbout={() => setPage("about")} />}
+        {page === "about" && <About />}
+      </div>
 
-      {/* Footer */}
+      {/* FOOTER */}
       <footer style={styles.footer}>
-        © {new Date().getFullYear()} Aurum Studio — All rights reserved.
+        © {new Date().getFullYear()} Aurum Studio — Built for modern teams
       </footer>
     </div>
   );
 }
+
+/* ================= HOME ================= */
+function Home({ visible, goToAbout }) {
+  return (
+    <>
+      {/* HERO */}
+      <section
+        style={{
+          ...styles.hero,
+          opacity: visible ? 1 : 0,
+          transform: visible ? "translateY(0)" : "translateY(40px)",
+          transition: "all 0.8s ease",
+        }}
+      >
+        <p style={styles.eyebrow}>Welcome to Aurum Studio</p>
+
+        <h1 style={styles.title}>
+          Build stunning <span style={{ color: "#c9a96e" }}>digital experiences</span>
+        </h1>
+
+        <p style={styles.sub}>
+          We design and develop premium web experiences with modern UI,
+          animations, and performance-first architecture.
+        </p>
+
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <button
+            style={styles.primaryBtn}
+            onClick={goToAbout}
+            onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
+            onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+          >
+            Get Started →
+          </button>
+
+          <button style={styles.outlineBtn}>Live Demo</button>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section style={styles.section}>
+        <h2 style={styles.sectionTitle}>Why choose us</h2>
+
+        <div style={styles.grid}>
+          {features.map((f) => (
+            <div
+              key={f.title}
+              style={styles.card}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-10px)";
+                e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <div style={styles.icon}>{f.icon}</div>
+              <h3>{f.title}</h3>
+              <p style={{ color: "#aaa" }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={styles.cta}>
+        <h2>Ready to build something amazing?</h2>
+        <button style={styles.primaryBtn}>Start your project</button>
+      </section>
+    </>
+  );
+}
+
+/* ================= ABOUT ================= */
+function About() {
+  return (
+    <section style={styles.section}>
+      <h2 style={styles.sectionTitle}>About Us</h2>
+      <p style={{ maxWidth: "600px", color: "#aaa" }}>
+        We are a small but powerful team focused on crafting modern, scalable,
+        and high-performance web applications. Every pixel and every interaction
+        is designed with purpose.
+      </p>
+
+      <div style={styles.grid}>
+        {team.map((t) => (
+          <div key={t.name} style={styles.card}>
+            <div style={styles.icon}>{t.emoji}</div>
+            <h3>{t.name}</h3>
+            <p style={{ color: "#c9a96e" }}>{t.role}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ================= DATA ================= */
+const features = [
+  { icon: "⚡", title: "Fast Performance", desc: "Optimized for speed and scalability." },
+  { icon: "🎨", title: "Modern Design", desc: "Clean UI with smooth animations." },
+  { icon: "🔒", title: "Secure", desc: "Best practices for safety and reliability." },
+  { icon: "🚀", title: "Scalable", desc: "Built for growth and expansion." },
+];
+
+const team = [
+  { emoji: "👨‍💻", name: "Sehr Dev", role: "Frontend Developer" },
+  { emoji: "🎨", name: "UI Designer", role: "Design Lead" },
+];
+
+/* ================= STYLES ================= */
+const styles = {
+  root: {
+    fontFamily: "sans-serif",
+    background: "#0f0f14",
+    color: "#fff",
+    minHeight: "100vh",
+  },
+
+  nav: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "1rem 2rem",
+    background: "#0f0f14",
+    borderBottom: "1px solid #222",
+  },
+
+  logo: {
+    fontWeight: "bold",
+    fontSize: "20px",
+  },
+
+  navLinks: {
+    display: "flex",
+    gap: "10px",
+  },
+
+  navBtn: (active) => ({
+    background: active ? "#c9a96e" : "transparent",
+    border: "1px solid #c9a96e",
+    color: active ? "#000" : "#c9a96e",
+    padding: "6px 14px",
+    cursor: "pointer",
+  }),
+
+  hero: {
+    padding: "6rem 2rem",
+    textAlign: "center",
+  },
+
+  eyebrow: {
+    color: "#c9a96e",
+    letterSpacing: "2px",
+  },
+
+  title: {
+    fontSize: "3rem",
+    margin: "1rem 0",
+  },
+
+  sub: {
+    color: "#aaa",
+    maxWidth: "500px",
+    margin: "0 auto 2rem",
+  },
+
+  primaryBtn: {
+    background: "#c9a96e",
+    color: "#000",
+    padding: "12px 24px",
+    border: "none",
+    cursor: "pointer",
+    transition: "0.3s",
+  },
+
+  outlineBtn: {
+    border: "1px solid #c9a96e",
+    color: "#c9a96e",
+    padding: "12px 24px",
+    background: "transparent",
+    cursor: "pointer",
+  },
+
+  section: {
+    padding: "4rem 2rem",
+    textAlign: "center",
+  },
+
+  sectionTitle: {
+    marginBottom: "2rem",
+  },
+
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "20px",
+  },
+
+  card: {
+    background: "#1a1a22",
+    padding: "2rem",
+    borderRadius: "10px",
+    transition: "0.3s",
+  },
+
+  icon: {
+    fontSize: "2rem",
+    marginBottom: "1rem",
+  },
+
+  cta: {
+    padding: "4rem 2rem",
+    textAlign: "center",
+    background: "#15151d",
+  },
+
+  footer: {
+    textAlign: "center",
+    padding: "2rem",
+    color: "#666",
+  },
+};
+
+/* ================= GLOBAL CSS ================= */
+const globalStyles = `
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+`;
